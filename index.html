@@ -31,8 +31,8 @@
     </script>
 
     <!--[if lt IE 9]>
-	<script src="lib/js/html5shiv.js"></script>
-	<![endif]-->
+        <script src="lib/js/html5shiv.js"></script>
+        <![endif]-->
   </head>
 
   <body>
@@ -41,26 +41,26 @@
 
       <!-- Any section element inside of this container is displayed as a slide -->
       <div class="slides">
-	<section>
-	  <h1>Dragonmark</h1>
-	  <h3>Distributed <code>core.async</code></h3>
-	  <p>
+        <section>
+          <h1>Dragonmark</h1>
+          <h3>Distributed <code>core.async</code></h3>
+          <p>
             <small>Clojure eXchange 2014</small>
             <br>
-	    <small>Created by <a href="http://dpp.rocks">David Pollak</a> / <a href="https://twitter.com/dpp">@dpp</a></small>
-	  </p>
-	</section>
+            <small><a href="http://dpp.rocks">David Pollak</a> / <a href="https://twitter.com/dpp">@dpp</a></small>
+          </p>
+        </section>
 
 
-	<section data-markdown>
-	  <script type="text/template">
-	    ## About @dpp
+        <section data-markdown>
+          <script type="text/template">
+            ## About @dpp
 
             * Founded Lift web framework
             * Wrote a bunch of commercial spreadsheets
             * Crazy passionate lawyer-trained tech dude
-	  </script>
-	</section>
+          </script>
+        </section>
 
         <section>
           <h2>Dragonmark: the name</h2>
@@ -73,8 +73,14 @@
           <h2>Dragonmark: the name</h2>
 
           <img src="images/dragonmark.jpg">
-          <p class="fragment">from <i>How to Train Your Dragon</i>.<br> The
-          mark of those rebelling against Alvin the Treacherous.</p>
+          <p class="fragment">from <i>How to Train Your Dragon</i> (the book).<br> The
+            mark of those rebelling against Alvin the Treacherous.</p>
+        </section>
+
+        <section>
+          <h2>Anti-Diaspora</h2>
+          <p>Yes, this talk will contain a lot of seemingly random threads...
+            I hope to pull it together in the end (and in under 50 minutes)</p>
         </section>
 
         <section>
@@ -124,7 +130,9 @@
         <section>
           <h2>Yay Clojure</h2>
           <ul>
-            <li>Separation of data and behavior</li>
+            <li>Separation of data
+              <span class="fragment">and schema (type)</span><span class="fragment">
+                and behavior</span></li>
             <li class="fragment">Immutable data structures<span class="fragment">: not cyclical</span></li>
             <li class="fragment">Transit<span class="fragment">: Richer than JSON, cross platform serialization</span></li>
           </ul>
@@ -137,136 +145,270 @@
 
         </section>
 
+        <section>
+          <h2>And now for<br>Something completely different...</h2>
+          <p>Thinking asynchronously...</p>
+          <p class="fragment">Well...</p>
+          <p class="fragment">Nothing is synchronous...</p>
+          <p class="fragment">Exception some 'weird' quantum effects...</p>
+          <p class="fragment">But...</p>
+          <p class="fragment">We humans mostly gloss over asynchronousness.</p>
+        </section>
+
+        <section>
+          <h2>Actors & Channels</h2>
+
+          <ul>
+            <li class="fragment"><code>Any =&gt; Unit</code><span class="fragment">: I'm going to the pub</span></li>
+            <li class="fragment"><code>X =&gt; LAFuture[Y]</code><span class="fragment">: Bruce, I'd like a hug!</span></li>
+            <li class="fragment">Channels &gt; Actor <br>'cause backpressure
+              <span class="fragment"> and separation of concerns.</span>
+              <span class="fragment"><br>Actors can be modeled with Channels,
+              <br>but not vice versa.</span>
+            </li>
+          </ul>
+        </section>
+
+
+        <section>
+          <h2>Linearizing the non-linear</h2>
+          <p><code>core.async</code>:
+            linear instructions for non-linear execution</p>
+          <p class="fragment">Spike: find the book<br>
+            Pinky: Find Applejack<br>
+            S&amp;P: Look for gems
+            <div class="fragment">When S&amp;P are done, Twightlight does stuff
+              with gems,
+              Applejack <img src="images/180px-Canterlot_Castle_Applejack_2.png" height="50">,
+              and the book
+            </div>
+          </p>
+
+          <p class="fragment">aka the <code>gofor</code> macro</p>
+          <h2 class="fragment">Yay! <span class="fragment">Finally!</span> <span class="fragment">Some Dragonmark</span></h2>
+        </section>
+
+        <section>
+          <h2><code>gofor</code>: for comprehension, go-style</h2>
+          <pre><code data-trim contenteditable>
+(gofor
+  [a (foo channel {:thing value :other_thing other_value})]
+  :let [b (+ a 1)]
+  [c (baz other_channel)
+   d (moose third_channel {:p b}
+   :timeout 45000]
+  (println a b c)
+  :error (println &err &at))
+            </code></pre>
+
+<pre class="fragment"><code>[a (foo channel {:thing value :other_thing other_value})]</code></pre>
+
+<p class="fragment">
+sends a message to <code>channel</code>:
+</p>
+
+<pre class="fragment"><code data-trim>
+{:_cmd "foo"
+ :thing value
+ :other_thing other_value
+ :_return a_created_channel}
+</code></pre>
+
+          <p class="fragment">Simultaneous dispatch <span class="fragment">&amp; timeout</span></p>
+        </section>
+
+        <section>
+          <h2>Namespace -&gt; Service</h2>
+          <pre><code data-trim>(def service-channel (dc/build-service ns))</code></pre>
+
+          <p class="fragment">In the namespace, we define functions:</p>
+          <pre class="fragment"><code data-trim>
+(sc/defn ^:service get-42 :- sc/Num
+    ([] 42)
+    ([x :- sc/Num] (+ x 42)))
+
+(sc/defn ^:service plus-one :- sc/Num
+    "Hello"
+    [x :- sc/Num]
+    (+ 1 x))
+</code></pre>
+
+
+        </section>
+
+        <section>
+          <h2>Asking a service for documentation</h2>
+          <iframe width="560" height="315" src="https://www.youtube.com/embed/L8oAQOvOEXY" frameborder="0" allowfullscreen></iframe>
+
+
+          <pre class="fragment"><code data-trim>
+docs (_commands service)]
+:let [_ (println "Commands:\n" docs)
+</code></pre>
+
+          <pre class="fragment"><code data-trim>
+Commands:
+{get-42 Inputs: ([] [x :- sc/Num])
+Returns: sc/Num
+
+Hello, plus-one Inputs: [x :- sc/Num]
+Returns: sc/Num}
+</code></pre>
+          </section>
+
+        <section>
+          <h2>Recap (so far...)</h2>
+          <ul>
+            <li>Serialization mostly addressed in Clojure</li>
+            <li class="fragment">Linearizing asynchronous execution easy with
+              <code>core.async</code></li>
+            <li class="fragment">Dragonmark utilities:
+              <ul>
+                <li>turn a namespace into services</li>
+                <li>orchestrate complex message sends/receives</li>
+              </ul>
+            </li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>I like to be proactive</h2>
+
+          <img src="images/rainbow-dash.jpg">
+        </section>
+
+        <section>
+          <h2>Dragonmark:<br>semantics of <code>core.async</code></h2>
+          <ul>
+            <li>But across address spaces</li>
+            <li class="fragment">Non-obvious to app</li>
+            <li class="fragment">Transport independent</li>
+          </ul>
+
+          <h2 class="fragment">Boring Lift Comet rant</h2>
+        </section>
+
+        <section>
+          <h2>Plumbing</h2>
+          <ul>
+            <li>The best plumbing "just works"</li>
+            <li class="fragment">Focus on taking a shower rather than
+            <span class="fragment">where the water is coming from</span>
+            <span class="fragment">or going to</span>
+            </li>
+            <li class="fragment">Pipes accessible
+              but not in your face, so you can fix them when you need to
+            <span class="fragment">or call a plumber do the fixing</span></li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>Dragonmark: Why?</h2>
+          <ul>
+            <li>Isolate logic from transport for testing</li>
+            <li class="fragment">faster dev cycles</li>
+            <li class="fragment"><b>Fewer developer context switches</b></li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>Dragonmark: How?</h2>
+          <ul>
+            <li>Discover service</li>
+            <li class="fragment">send messages</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>Demo</h2>
+
+          <iframe width="650" height="500" src="http://dragonmark-chat.herokuapp.com/" frameborder="0" allowfullscreen></iframe>
+        </section>
+
+<section>
+  <h2>Setting up the Chat</h2>
+
+<pre><code data-trim>
+(circ/gofor
+ :let [other-root (circ/remote-root transport)]
+ [the-chat-server (locate-service other-root {:service "chat"})]
+ [_ (add-listener the-chat-server {:the-chan chat-listener})]
+ (reset! chat-server the-chat-server)
+ :error (.log js/console "Got error " &err " var " &var)
+ )
+</code></pre>
+
+          <ul>
+            <li>get the remote <code>root</code></li>
+            <li class="fragment">locate the "chat" service</li>
+            <li class="fragment">register as a listener</li>
+          </ul>
+
+          <br>
+          <h2 class="fragment">Boom!</h2>
 
 
 
-	<section id="transitions">
-	  <h2>Transition Styles</h2>
-	  <p>
-	    You can select from different transitions, like: <br>
-	    <a href="?transition=cube#/transitions">Cube</a> -
-	    <a href="?transition=page#/transitions">Page</a> -
-	    <a href="?transition=concave#/transitions">Concave</a> -
-	    <a href="?transition=zoom#/transitions">Zoom</a> -
-	    <a href="?transition=linear#/transitions">Linear</a> -
-	    <a href="?transition=fade#/transitions">Fade</a> -
-	    <a href="?transition=none#/transitions">None</a> -
-	    <a href="?#/transitions">Default</a>
-	  </p>
-	</section>
+</section>
 
-	<section id="themes">
-	  <h2>Themes</h2>
-	  <p>
-	    Reveal.js comes with a few themes built in: <br>
-	    <a href="?#/themes">Default</a> -
-	    <a href="?theme=sky#/themes">Sky</a> -
-	    <a href="?theme=beige#/themes">Beige</a> -
-	    <a href="?theme=simple#/themes">Simple</a> -
-	    <a href="?theme=serif#/themes">Serif</a> -
-	    <a href="?theme=night#/themes">Night</a> <br>
-	    <a href="?theme=moon#/themes">Moon</a> -
-	    <a href="?theme=solarized#/themes">Solarized</a>
-	  </p>
-	  <p>
-	    <small>
-	      * Theme demos are loaded after the presentation which leads to flicker. In production you should load your theme in the <code>&lt;head&gt;</code> using a <code>&lt;link&gt;</code>.
-	    </small>
-	  </p>
-	</section>
+<section>
+  <h2>Counting</h2>
+<pre><code data-trim>
+(defn make-remote-calls
+  []
 
-	<section>
-	  <h2>Global State</h2>
-	  <p>
-	    Set <code>data-state="something"</code> on a slide and <code>"something"</code>
-	    will be added as a class to the document element when the slide is open. This lets you
-	    apply broader style changes, like switching the background.
-	  </p>
-	</section>
+  (circ/gofor
+   [answer (inc (circ/remote-root transport))]
+   (do
+     (swap! app-state assoc :text (str "Remote count: " answer))
+     (js/setTimeout make-remote-calls 1000)
+     )
+   ))
+</code></pre>
 
-	<section data-state="customevent">
-	  <h2>Custom Events</h2>
-	  <p>
-	    Additionally custom events can be triggered on a per slide basis by binding to the <code>data-state</code> name.
-	  </p>
-	  <pre><code data-trim contenteditable style="font-size: 18px; margin-top: 20px;">
-              Reveal.addEventListener( 'customevent', function() {
-	      console.log( '"customevent" has fired' );
-              } );
-	  </code></pre>
-	</section>
+<pre class="fragment"><code data-trim>
+root (circ/build-root-channel
+     {"get" (fn [msg env] @count-atom)
+      "inc" (fn [msg env]
+            (swap! count-atom inc))}
+</code></pre>
+</section>
 
-	<section>
-	  <section data-background="#007777">
-	    <h2>Slide Backgrounds</h2>
-	    <p>
-	      Set <code>data-background="#007777"</code> on a slide to change the full page background to the given color. All CSS color formats are supported.
-	    </p>
-	    <a href="#" class="image navigate-down">
-	      <img width="178" height="238" src="https://s3.amazonaws.com/hakim-static/reveal-js/arrow.png" alt="Down arrow">
-	    </a>
-	  </section>
-	  <section data-background="https://s3.amazonaws.com/hakim-static/reveal-js/arrow.png">
-	    <h2>Image Backgrounds</h2>
-	    <pre><code>&lt;section data-background="image.png"&gt;</code></pre>
-	  </section>
-	  <section data-background="https://s3.amazonaws.com/hakim-static/reveal-js/arrow.png" data-background-repeat="repeat" data-background-size="100px">
-	    <h2>Repeated Image Backgrounds</h2>
-	    <pre><code style="word-wrap: break-word;">&lt;section data-background="image.png" data-background-repeat="repeat" data-background-size="100px"&gt;</code></pre>
-	  </section>
-	</section>
+        <section>
+          <h2>One small bit of magic</h2>
+          <img src="images/twilight_magic.jpg">
+          <br>
+          <ul>
+            <li>Special Transit serializer to create proxy for channels</li>
+            <li class="fragment">thus channels can be sent across address spaces</li>
+            <li class="fragment">and they have the same semantics</li>
+          </ul>
+<pre class="fragment"><code data-trim>
+{:_cmd "foo"
+ :thing value
+ :other_thing other_value
+ :_return a_created_channel}
+</code></pre>
 
+        </section>
 
+        <section>
+          <h2>Other stuff</h2>
+          <ul>
+            <li>Backpressure maintained across address spaces</li>
+            <li class="fragment">transport pluggable (currently websockets with auto-reconnect)</li>
+            <li class="fragment">Rudimentary service discovery</li>
+            <li class="fragment">"Service" functions can be marked remote or local (security)</li>
+          </ul>
+        </section>
 
-	<section>
-	  <h2>Clever Quotes</h2>
-	  <p>
-	    These guys come in two forms, inline: <q cite="http://searchservervirtualization.techtarget.com/definition/Our-Favorite-Technology-Quotations">
-	      &ldquo;The nice thing about standards is that there are so many to choose from&rdquo;</q> and block:
-	  </p>
-	  <blockquote cite="http://searchservervirtualization.techtarget.com/definition/Our-Favorite-Technology-Quotations">
-	    &ldquo;For years there has been a theory that millions of monkeys typing at random on millions of typewriters would
-	    reproduce the entire works of Shakespeare. The Internet has proven this theory to be untrue.&rdquo;
-	  </blockquote>
-	</section>
+        <section>
+          <img src="images/my-little-pony-friendship-is-magic-brony-case-closed.jpg">
+          <h2>Questions?</h2>
 
-	<section>
-	  <h2>Pretty Code</h2>
-	  <pre><code data-trim contenteditable>
-function linkify( selector ) {
-  if( supports3DTransforms ) {
+          <p><a href="https://github.com/dragonmark">Dragonmark Repo</a>: https://github.com/dragonmark</p>
 
-    var nodes = document.querySelectorAll( selector );
-
-    for( var i = 0, len = nodes.length; i &lt; len; i++ ) {
-      var node = nodes[i];
-
-      if( !node.className ) {
-        node.className += ' roll';
-      }
-    }
-  }
-}
-	  </code></pre>
-	  <p>Courtesy of <a href="http://softwaremaniacs.org/soft/highlight/en/description/">highlight.js</a>.</p>
-	</section>
-
-	<section>
-	  <section id="fragments">
-	    <h2>Fragmented Views</h2>
-	    <p>Hit the next arrow...</p>
-	    <p class="fragment">... to step through ...</p>
-	    <ol>
-	      <li class="fragment"><code>any type</code></li>
-	      <li class="fragment"><em>of view</em></li>
-	      <li class="fragment"><strong>fragments</strong></li>
-	    </ol>
-
-	    <aside class="notes">
-	      This slide has fragments which are also stepped through in the notes window.
-	    </aside>
-	  </section>
-
+        </section>
 
 
       </div>
@@ -286,8 +428,8 @@ function linkify( selector ) {
       history: true,
       center: true,
 
-      theme: Reveal.getQueryHash().theme, // available themes are in /css/theme
-      transition: Reveal.getQueryHash().transition || 'default', // default/cube/page/concave/zoom/linear/fade/none
+      theme: 'serif', // Reveal.getQueryHash().theme, // available themes are in /css/theme
+      transition: 'cube', // Reveal.getQueryHash().transition || 'default', // default/cube/page/concave/zoom/linear/fade/none
 
       // Parallax scrolling
       // parallaxBackgroundImage: 'https://s3.amazonaws.com/hakim-static/reveal-js/reveal-parallax-1.jpg',

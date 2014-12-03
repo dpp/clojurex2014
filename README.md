@@ -24,3 +24,6 @@ Image sources:
 * http://iambrony.com/gif/4733
 * http://car-memes.com/animated-mlp-fim-gif-collection/2/
 * http://giphy.com/gifs/my-little-pony-mlp-skyrim-132WFRPmRz21iw
+* http://maditsmadfunny.wikia.com/wiki/Applejack
+* http://forum.legendsofequestria.com/index.php?topic=9529.0
+* http://kristinbaker.blogspot.co.uk/2011/09/music-for-writing-mlpfim.html
