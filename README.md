@@ -27,3 +27,4 @@ Image sources:
 * http://maditsmadfunny.wikia.com/wiki/Applejack
 * http://forum.legendsofequestria.com/index.php?topic=9529.0
 * http://kristinbaker.blogspot.co.uk/2011/09/music-for-writing-mlpfim.html
+* http://feminspire.com/equestria-girls-how-did-my-little-pony-go-so-so-wrong/
