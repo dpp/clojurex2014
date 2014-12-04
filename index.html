@@ -52,14 +52,16 @@
         </section>
 
 
-        <section data-markdown>
-          <script type="text/template">
-            ## About @dpp
+        <section>
+          <h2>About @dpp</h2>
 
-            * Founded Lift web framework
-            * Wrote a bunch of commercial spreadsheets
-            * Crazy passionate lawyer-trained tech dude
-          </script>
+          <ul>
+            <li>Founded Lift web framework</li>
+            <li>Wrote a bunch of commercial spreadsheets</li>
+            <li>Crazy passionate lawyer-trained tech dude</li>
+          </ul>
+
+          <img src="images/logo.png">
         </section>
 
         <section>
@@ -406,10 +408,32 @@ root (circ/build-root-channel
         </section>
 
         <section>
+          <h2>Pluggable Transport</h2>
+
+<pre><code data-trim>
+(defprotocol Transport
+  "A transport to another address space"
+  (remote-root
+    "Returns a channel that is a way to send messages to
+     the remote root"
+    [this])
+  (close!
+    "Close the transport"
+    [this])
+
+  (proxy-info "GUID to Proxy functions" [this])
+
+  (serialize "Serialize a msg" [this info])
+
+  (deserialize "reify a msg" [this info]))
+</code></pre>
+   </section>
+
+        <section>
           <h2>Other stuff</h2>
           <ul>
             <li>Backpressure maintained across address spaces</li>
-            <li class="fragment">transport pluggable (currently websockets with auto-reconnect)</li>
+            <li class="fragment">transport currently websockets with auto-reconnect</li>
             <li class="fragment">Rudimentary service discovery</li>
             <li class="fragment">"Service" functions can be marked remote or local (security)</li>
           </ul>
